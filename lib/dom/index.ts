@@ -1,5 +1,6 @@
 import type { KeyLocker } from "../@types/keylocker"
 
+export * from '../@types/keylocker'
 export class DOMKeyLocker implements KeyLocker.ClassInterface {
     public readonly config: KeyLocker.DOMConfig
 
