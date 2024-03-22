@@ -2,6 +2,6 @@
     "name": "@developer3/safe-keys",
     "version": "0.1.2",
     "exports": {
-        "./dom": "./lib/dom/index.ts"
+        "./dom": "./dom.ts"
     }
 }
