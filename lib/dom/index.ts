@@ -22,7 +22,7 @@ export class DOMKeyLocker implements KeyLocker.ClassInterface {
         }
     }
 
-    public buf2hex(buffer: ArrayBuffer) {
+    public buf2hex(buffer: ArrayBuffer): string {
         return [...new Uint8Array(buffer)]
             .map(x => x.toString(16).padStart(2, '0'))
             .join('')
