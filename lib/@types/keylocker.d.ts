@@ -1,4 +1,4 @@
-export namespace KeyLocker {
+declare namespace KeyLocker {
     export interface ClassInterface {
         encrypt(value: string, keyName: string): Promise<string>
         decrypt(value: string, keyName: string): Promise<string>
