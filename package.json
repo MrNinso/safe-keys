@@ -1,0 +1,8 @@
+{
+  "name": "safe-keys",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:MrNinso/safe-keys.git",
+  "author": "jheison.silva <jheison540as@gmail.com>",
+  "license": "MIT"
+}
