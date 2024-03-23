@@ -1,11 +1,32 @@
-export class DOMKeyLocker implements KeyLocker.ClassInterface {
-    public readonly config: KeyLocker.DOMConfig
+import * as Types from './types'
 
-    constructor(config: KeyLocker.DOMConfig) {
+interface DOMConfig {
+    indexDB: {
+        database: string
+        objectStore: string
+    }
+    key: Exclude<Parameters<SubtleCrypto['generateKey']>[0], 'Ed25519'>
+    cryptoConfig: Parameters<SubtleCrypto['encrypt']>[0]
+}
+
+interface DOMApis {
+    indexedDB: IDBFactory
+    crypto: SubtleCrypto
+}
+
+interface DOMKeyIndexedDBObj {
+    id: string
+    key: CryptoKeyPair
+}
+
+export class DOMKeyLocker {
+    public readonly config: DOMConfig
+
+    constructor(config: DOMConfig) {
         this.config = config
     }
 
-    public getDomApis(): KeyLocker.DOMApis | undefined {
+    public getDomApis(): DOMApis | undefined {
         const indexedDB = window.indexedDB
 
         if (indexedDB === undefined) return
@@ -51,7 +72,6 @@ export class DOMKeyLocker implements KeyLocker.ClassInterface {
                 for (let i = currentVersion; i < (ev.newVersion ?? 1); i++) {
                     if (i < 1) {
                         db.result.createObjectStore(this.config.indexDB.objectStore, { keyPath: "uuid" })
-                        continue
                     }
                 }
             }
@@ -71,11 +91,11 @@ export class DOMKeyLocker implements KeyLocker.ClassInterface {
         })
     }
 
-    public async getOrCreateKey(apis: KeyLocker.DOMApis, keyName: string): Promise<CryptoKeyPair> {
+    public async getOrCreateKey(apis: DOMApis, keyName: string): Promise<CryptoKeyPair> {
         const key: [CryptoKeyPair | undefined] = [undefined]
 
         await this.callDB(apis.indexedDB, async store => {
-            const query: IDBRequest<KeyLocker.DOMKeyIndexedDBObj> = store.get(keyName)
+            const query: IDBRequest<DOMKeyIndexedDBObj> = store.get(keyName)
             query.onsuccess = () => {
                 key[0] = query.result?.key
             }
@@ -90,7 +110,7 @@ export class DOMKeyLocker implements KeyLocker.ClassInterface {
         await this.callDB(apis.indexedDB, async store => store.add({
             id: keyName,
             key: key[0] as CryptoKeyPair
-        } satisfies KeyLocker.DOMKeyIndexedDBObj))
+        } satisfies DOMKeyIndexedDBObj))
 
         return key[0]
     }
@@ -114,10 +134,10 @@ export class DOMKeyLocker implements KeyLocker.ClassInterface {
             type: 'encrypt',
             keyName,
             value: this.buf2hex(encrypt)
-        } satisfies KeyLocker.DOMEncryptReturn)
+        } satisfies Types.EncryptReturn)
     }
 
-    public async tryReadJson(value: string): Promise<Partial<KeyLocker.DOMEncryptReturn>> {
+    public async tryReadJson(value: string): Promise<Partial<Types.EncryptReturn>> {
         return JSON.parse(value)
     }
 
