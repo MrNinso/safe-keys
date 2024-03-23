@@ -5,7 +5,14 @@ interface DOMConfig {
         database: string
         objectStore: string
     }
-    key: Exclude<Parameters<SubtleCrypto['generateKey']>[0], 'Ed25519'>
+    key: 
+        | RsaHashedKeyGenParams 
+        | EcKeyGenParams 
+        |AesKeyGenParams 
+        | HmacKeyGenParams 
+        | Pbkdf2Params
+        | AlgorithmIdentifier
+    ,
     cryptoConfig: Parameters<SubtleCrypto['encrypt']>[0]
 }
 
