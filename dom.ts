@@ -22,7 +22,6 @@ interface DOMApis {
 }
 
 interface DOMKeyIndexedDBObj {
-    id: string
     key: CryptoKeyPair
 }
 
@@ -115,9 +114,8 @@ export class DOMKeyLocker {
         key[0] = await apis.crypto.generateKey(this.config.key, false, ['encrypt', 'decrypt']) as CryptoKeyPair
 
         await this.callDB(apis.indexedDB, async store => store.add({
-            id: keyName,
             key: key[0] as CryptoKeyPair
-        } satisfies DOMKeyIndexedDBObj))
+        } satisfies DOMKeyIndexedDBObj, keyName))
 
         return key[0]
     }
