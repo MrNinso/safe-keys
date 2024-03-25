@@ -84,7 +84,7 @@ export class DOMKeyLocker {
             }
 
             db.onsuccess = async () => {
-                const tx = db.result.transaction(this.config.indexDB.database, 'readwrite')
+                const tx = db.result.transaction(this.config.indexDB.objectStore, 'readwrite')
                 const store = tx.objectStore(this.config.indexDB.objectStore)
 
                 await call(store)
